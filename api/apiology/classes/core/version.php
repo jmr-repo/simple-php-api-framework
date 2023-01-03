@@ -26,7 +26,7 @@ class Version
                     $this->http_response->httpJsonResponse(404, "Sorry!. No resource found");
                 }
             } else {
-                $this->http_response->httpJsonResponse(404, "Sorry!. Version is deprecated");
+                $this->http_response->httpJsonResponse(404, "Sorry!. Version is deprecated or not yet released");
             }
         } else {
             $this->http_response->httpJsonResponse(404, "Version Not Found");
