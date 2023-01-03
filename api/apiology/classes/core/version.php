@@ -23,7 +23,7 @@ class Version
                     $resource = array_splice($_request, 2);
                     $version->$method($resource);
                 } else {
-                    $this->http_response->httpJsonResponse(404, "Sorry!. No resource found");
+                    $this->http_response->httpJsonResponse(404, "Sorry!. No resource selected");
                 }
             } else {
                 $this->http_response->httpJsonResponse(404, "Sorry!. Version is deprecated or not yet released");
