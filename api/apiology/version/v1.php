@@ -3,7 +3,7 @@
 namespace Apiology\Apiology\Version;
 
 // Headers Class
-use Apiology\Apiology\classes\http as HTTP;
+use Apiology\Apiology\Classes\Core\http as HTTP;
 
 // Resource / Class
 class V1
