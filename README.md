@@ -1,5 +1,9 @@
 # APIOLOGY - PHP API FRAMEWORK
 
+Change **docker-compose.yml** _port_ to a custo port not used.
+
+If required, remember to change the name of the containaer
+
 ## Setup
 
 There are different ways to setup
