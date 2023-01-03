@@ -2,6 +2,14 @@
 
 ## Setup
 
+There are different ways to setup
+
+1. Create a Reource
+
+- Add the name of the method to be called in v\*.php, which will be the resource
+
+2. Creating a new version
+
 - Create a function inside v*.php (where * means number of the version)
 - Add Function Name in v\*.php with the following code in it
 
@@ -30,5 +38,3 @@ $this->http_response = new HTTP();
             }
         }
 ```
-
-- Add the name of the method to be called in v\*.php in line 41
