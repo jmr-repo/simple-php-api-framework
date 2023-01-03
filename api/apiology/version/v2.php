@@ -13,7 +13,7 @@ class V2
 
     public function __construct()
     {
-        return true;
+        return false;
     }
 
     public function sample($_data)
