@@ -2,9 +2,6 @@
 
 namespace Apiology\Apiology\Version;
 
-// Headers Class
-use Apiology\Apiology\Classes\Core\http as HTTP;
-
 // Resource / Class
 class V1
 {
@@ -17,13 +14,13 @@ class V1
     }
 
     public function sample($_data){
-        // Instance the HTTP object
-        $this->http_response = new HTTP();
-        $file = "apiology/version/resources/sample.php";
+        // assign resource name to a variable
+        $resource = "sample";
+        $file = "apiology/version/resources/" .$resource. ".php";
         // require file
         require $file;
         // call by namespace
-        $module = "Apiology\\Apiology\\version\\resources\\Sample";
+        $module = "Apiology\\Apiology\\version\\resources\\" .ucfirst($resource). "";
         // instantiate object
         $module = new $module();
         // call method (resource)
