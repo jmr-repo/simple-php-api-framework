@@ -22,27 +22,8 @@ class Email
 	private $body;
 	private $html;
 
-
-	public function test()
+	public function sendEmail($_settings)
 	{
-		return true;
-	}
-
-	// Accepts 2 arguments
-	/* 	$_email - array('account', 'user full name')
-	* 	$_message - string base64 encode
-	*/
-	public function sendEmail($_body)
-	{
-
-		$this->host = 'mail.domain.com';
-		$this->smtp_auth = true;
-		$this->username = 'no-reply@domain.com';
-		$this->password = 'password';
-		$this->port = 465;
-		$this->to = 'test@domain.com';
-		$this->subject = "Email From Apiology!";
-		$this->body = $this->emailTemplate($_body);
 
 		// Needs to have PHPMailer installed in order to remove all errors
 		$mail = new PHPMailer(true);
@@ -51,18 +32,21 @@ class Email
 			//Server settings
 			$mail->SMTPDebug = SMTP::DEBUG_OFF; //Enable verbose debug output
 			$mail->isSMTP(); //Send using SMTP
-			$mail->Host       = $this->host; //Set the SMTP server to send through
-			$mail->SMTPAuth   = $this->smtp_auth; //Enable SMTP authentication
-			$mail->Username   = $this->username; //SMTP username
-			$mail->Password   = $this->password;  //SMTP password
+			$mail->Host       = $_settings['host']; //Set the SMTP server to send through
+			$mail->SMTPAuth   = true; //Enable SMTP authentication
+			$mail->Username   = $_settings['username']; //SMTP username
+			$mail->Password   = $_settings['password'];  //SMTP password
 			$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
-			$mail->Port       = $this->port; //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+			$mail->Port       = 465; //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
 
 			//Recipients
-			$mail->setFrom('no-reply@domain.com', 'From');
-			$mail->addAddress('userone@domain.com', 'CC'); //Add a recipient
-			$mail->addReplyTo('usertwo@domain.com', 'Reply-To');
-			// $mail->addCC('EMAIL_CC', 'EMAIL_USER_CC');
+			$mail->setFrom($_settings['from'], $_settings['from-name']);
+			$mail->addAddress($_settings['to'], $_settings['to-name']); //Add a recipient
+			$mail->addReplyTo($_settings['reply-to'], $_settings['reply-to-name']);
+			if($_settings['cc'] != false){
+				$mail->addCC($_settings['cc'], $_settings['cc-name']);
+			}
+			
 
 			//Attachments
 			// $mail->addAttachment('image.jpg'); //Add attachments
@@ -70,8 +54,8 @@ class Email
 
 			//Content
 			$mail->isHTML(true); //Set email format to HTML
-			$mail->Subject = $this->subject;
-			$mail->Body    = base64_decode($this->body, true);
+			$mail->Subject = $_settings['subject'];
+			$mail->Body    = base64_decode(self::emailTemplate($_settings['body']), true);
 
 			$mail->send();
 			return true;
@@ -80,22 +64,11 @@ class Email
 		}
 	}
 
-	protected function emailTemplate($_data)
+	protected function emailTemplate($_body)
 	{
-
-		$fullName = ucfirst($_data['name']) . " " . ucfirst($_data['lastname']);
-		$email = strtolower($_data['email']);
-		$phone = $_data['phone'];
-		$message = $_data['message'] === "__empty__" ? "No dejaron mensaje" : $_data['message'];
-
-		$level = '';
-		foreach ($_data['level'] as $key => $value) {
-			$level .= $value . ", ";
-		}
-		$course = '';
-		foreach ($_data['course'] as $key => $value) {
-			$course .= $value . ", ";
-		}
+		$logo = $_body['logo-url'];
+        $message = $_body['message'];
+        $domain = $_body['domain'];
 
 		$this->html = <<<EOT
 			<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -259,7 +232,7 @@ class Email
 				<tr>
 					<td style="padding-right: 0px;padding-left: 0px;" align="left">
 						
-						<img align="left" border="0" src="https://domain.com/logo/logo_sunnycenter_horizontal_1024x595.png" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 29%;max-width: 168.2px;" width="168.2"/>
+						<img align="left" border="0" src="$logo" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 29%;max-width: 168.2px;" width="168.2"/>
 						
 					</td>
 				</tr>
@@ -332,14 +305,7 @@ class Email
 						<td style="overflow-wrap:break-word;word-break:break-word;padding:40px 40px 30px;font-family:'Lato',sans-serif;" align="left">
 							
 				<div style="line-height: 140%; text-align: left; word-wrap: break-word;">
-					<p style="font-size: 14px; line-height: 140%; padding-bottom:10px;">Hola,</p>
-					<p style="font-size: 14px; line-height: 140%; padding-bottom:10px;">Alguien mando un mensaje al formulario de contacto web.</p>
-					<p style="font-size: 14px; line-height: 140%; padding-bottom:10px;"><strong>Nombre:</strong> $fullName</p>
-					<p style="font-size: 14px; line-height: 140%; padding-bottom:10px;"><strong>eMail:</strong> $email</p>
-					<p style="font-size: 14px; line-height: 140%; padding-bottom:10px;"><strong>Tel&eacute;fono de Contacto:</strong> $phone</p>
-					<p style="font-size: 14px; line-height: 140%; padding-bottom:10px;"><strong>Nivel de Interes:</strong> $level</p>
-					<p style="font-size: 14px; line-height: 140%; padding-bottom:10px;"><strong>Talleres de Interes:</strong> $course</p>
-					<p style="font-size: 14px; line-height: 140%; padding-bottom:10px;"><strong>Mensaje:</strong> $message</p>
+					<p style="font-size: 14px; line-height: 140%; padding-bottom:10px;">$message</p>
 				</div>
 
 						</td>
@@ -374,7 +340,7 @@ class Email
 						<td style="overflow-wrap:break-word;word-break:break-word;padding:20px 0px;font-family:'Lato',sans-serif;" align="left">
 							
 				<div style="line-height: 100%; text-align: center; word-wrap: break-word;">
-					<p style="font-size: 14px; line-height: 100%; text-align: center;"><span style="font-size: 28px; line-height: 28px; color: #ffffff; font-family: Lato, sans-serif;"><span style="font-size: 14px; line-height: 14px; font-family: arial, helvetica, sans-serif;">www.domain.com</span><br /></span></p>
+					<p style="font-size: 14px; line-height: 100%; text-align: center;"><span style="font-size: 28px; line-height: 28px; color: #ffffff; font-family: Lato, sans-serif;"><span style="font-size: 14px; line-height: 14px; font-family: arial, helvetica, sans-serif;">$domain</span><br /></span></p>
 				</div>
 
 						</td>
